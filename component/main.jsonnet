@@ -5,6 +5,16 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.openshift4_config;
 
+local dockercfg = kube.Secret(params.dockerCredentials.secretName) {
+  metadata+: {
+    namespace: params.namespace,
+  },
+  data+: {
+    '.dockerconfigjson': params.dockerCredentials.dockerconfigjson,
+  },
+};
+
 // Define outputs below
 {
+  '01_dockercfg': dockercfg,
 }

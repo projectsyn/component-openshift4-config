@@ -1,3 +1,6 @@
-# Overwrite parameters here
-
-# parameters: {...}
+parameters:
+  openshift4_config:
+    namespace: openshift4-config
+    dockerCredentials:
+      secretName: pull-secret
+      dockerconfigjson: ?{vaultkv:${customer:name}/${cluster:name}/openshift4-config/dockercfg}

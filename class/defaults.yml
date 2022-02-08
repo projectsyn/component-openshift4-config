@@ -1,4 +1,6 @@
 parameters:
   openshift4_config:
     =_metadata: {}
-    namespace: syn-openshift4-config
+    namespace: openshift4-config
+    dockerCredentials:
+      secretName: pull-secret

@@ -6,14 +6,21 @@ The parent key for all of the following parameters is `openshift4_config`.
 
 [horizontal]
 type:: string
-default:: `syn-openshift4-config`
+default:: `openshift4-config`
 
-The namespace in which to deploy this component.
+The namespace in which the OpenShift configuration takes place
 
+== `dockerCredentials.secretName`
 
-== Example
+[horizontal]
+type:: string
+default:: `pull-secret`
 
-[source,yaml]
-----
-namespace: example-namespace
-----
+The default name for the global cluster pull secret in OpenShift.
+
+== `dockerCredentials.dockerconfigjson`
+
+[horizontal]
+type:: string
+
+A vault reference pointing to the Vault secret containing the docker configuration file in json format. If the key isn’t provided as a vault reference, the secret key must be provided in its base64 encoded form. It can be generated using the command echo -n '<mySecretKey> | base64.
