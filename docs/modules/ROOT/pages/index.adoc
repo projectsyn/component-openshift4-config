@@ -1,5 +1,5 @@
 = openshift4-config
 
-openshift4-config is a Commodore component to manage openshift4-config.
+openshift4-config is a Commodore component to manage openshift4-config. This component updates global cluster pull secrets as described in the openshift https://docs.openshift.com/container-platform/latest/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secrets[docs]
 
 See the xref:references/parameters.adoc[parameters] reference for further details.

@@ -9,7 +9,7 @@ local dockercfg = kube.Secret(params.dockerCredentials.secretName) {
   metadata+: {
     namespace: params.namespace,
   },
-  data+: {
+  stringData+: {
     '.dockerconfigjson': params.dockerCredentials.dockerconfigjson,
   },
 };
