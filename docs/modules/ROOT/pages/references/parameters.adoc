@@ -1,26 +1,11 @@
 = Parameters
 
-The parent key for all of the following parameters is `openshift4_config`.
+The parent key for all the following parameters is `openshift4_config`.
 
-== `namespace`
-
-[horizontal]
-type:: string
-default:: `openshift4-config`
-
-The namespace in which the OpenShift configuration takes place
-
-== `dockerCredentials.secretName`
+== `globalPullSecret`
 
 [horizontal]
 type:: string
-default:: `pull-secret`
+default:: null
 
-The default name for the global cluster pull secret in OpenShift.
-
-== `dockerCredentials.dockerconfigjson`
-
-[horizontal]
-type:: string
-
-A vault reference pointing to the Vault secret containing the docker configuration file in json format. If the key isn’t provided as a vault reference, the secret key must be provided in its base64 encoded form. It can be generated using the command echo -n '<mySecretKey> | base64.
+A vault reference pointing to the Vault secret containing docker global pull secret configuration file in json format. If the key is null the manifest isn't created. If the key isn’t provided as a vault reference, the secret key must be provided in its base64 encoded form. It can be generated using the command echo -n '<mySecretKey> | base64.
