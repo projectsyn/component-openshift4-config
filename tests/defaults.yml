@@ -1,6 +1,3 @@
 parameters:
   openshift4_config:
-    namespace: openshift-config
-    dockerCredentials:
-      secretName: pull-secret
-      dockerconfigjson: ?{vaultkv:${customer:name}/${cluster:name}/openshift4-config/dockercfg}
+    globalPullSecret: ?{vaultkv:${customer:name}/${cluster:name}/openshift4-config/dockercfg}
