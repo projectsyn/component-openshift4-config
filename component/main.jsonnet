@@ -12,6 +12,7 @@ local dockercfg = kube.Secret('pull-secret') {
   stringData+: {
     '.dockerconfigjson': params.globalPullSecret,
   },
+  type: 'kubernetes.io/dockerconfigjson',
 };
 
 // Define outputs below
