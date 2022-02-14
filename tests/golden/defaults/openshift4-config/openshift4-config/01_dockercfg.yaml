@@ -1,0 +1,12 @@
+apiVersion: v1
+data: {}
+kind: Secret
+metadata:
+  annotations: {}
+  labels:
+    name: pull-secret
+  name: pull-secret
+  namespace: openshift-config
+stringData:
+  .dockerconfigjson: t-silent-test-1234/c-green-test-1234/openshift4-config/dockercfg
+type: Opaque

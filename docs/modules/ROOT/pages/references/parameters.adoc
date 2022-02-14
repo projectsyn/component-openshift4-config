@@ -1,19 +1,22 @@
 = Parameters
 
-The parent key for all of the following parameters is `openshift4_config`.
+The parent key for all the following parameters is `openshift4_config`.
 
-== `namespace`
+== `globalPullSecret`
 
 [horizontal]
 type:: string
-default:: `syn-openshift4-config`
+default:: null
 
-The namespace in which to deploy this component.
+A Vault reference pointing to the Vault secret containing the docker configuration file in JSON format.
+If the parameter is null, the component doesn't manage the cluster's global pull secret.
 
+The component writes the value of this parameter into the field `.dockerconfigjson` of the secret `pull-secret` in namespace `openshift-config`.
 
-== Example
+See the OpenShift documentation for more details on https://docs.openshift.com/container-platform/latest/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secret[managing the cluster's global pull secret].
 
-[source,yaml]
-----
-namespace: example-namespace
-----
+[IMPORTANT]
+====
+You need to make sure that the existing pull secrets present on a cluster (deployed by the OpenShift installer) are included in the configuration deployed by this component.
+Otherwise, OpenShift cluster services may stop working because their respective container images can't be downloaded anymore.
+====
