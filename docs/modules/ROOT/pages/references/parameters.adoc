@@ -8,4 +8,15 @@ The parent key for all the following parameters is `openshift4_config`.
 type:: string
 default:: null
 
-A vault reference pointing to the Vault secret containing docker global pull secret configuration file in json format. If the key is null the manifest isn't created. If the key isn’t provided as a vault reference, the secret key must be provided in its base64 encoded form. It can be generated using the command echo -n '<mySecretKey> | base64.
+A Vault reference pointing to the Vault secret containing the docker configuration file in JSON format.
+If the parameter is null, the component doesn't manage the cluster's global pull secret.
+
+The component writes the value of this parameter into the field `.dockerconfigjson` of the secret `pull-secret` in namespace `openshift-config`.
+
+See the OpenShift documentation for more details on https://docs.openshift.com/container-platform/latest/openshift_images/managing_images/using-image-pull-secrets.html#images-update-global-pull-secret_using-image-pull-secret[managing the cluster's global pull secret].
+
+[IMPORTANT]
+====
+You need to make sure that the existing pull secrets present on a cluster (deployed by the OpenShift installer) are included in the configuration deployed by this component.
+Otherwise, OpenShift cluster services may stop working because their respective container images can't be downloaded anymore.
+====
