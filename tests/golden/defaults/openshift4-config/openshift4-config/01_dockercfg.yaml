@@ -9,4 +9,4 @@ metadata:
   namespace: openshift-config
 stringData:
   .dockerconfigjson: t-silent-test-1234/c-green-test-1234/openshift4-config/dockercfg
-type: Opaque
+type: kubernetes.io/dockerconfigjson
