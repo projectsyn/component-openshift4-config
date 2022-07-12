@@ -18,4 +18,5 @@ local dockercfg = kube.Secret('pull-secret') {
 // Define outputs below
 {
   [if params.globalPullSecret != null then '01_dockercfg']: dockercfg,
+  [if params.clusterUpgradeSCCPermissionFix.enabled then '02_clusterUpgradeSCCPermissionFix']: (import 'privileged-scc.libsonnet'),
 }
