@@ -3,4 +3,4 @@
 This code repository is part of Project Syn and the contribution guide at
 https://syn.tools/syn/about/contribution_guide.html does apply.
 
-Submit Pull Requests at https://github.com/ZuGao/component-openshift4-config/pulls.
+Submit Pull Requests at https://github.com/appuio/component-openshift4-config/pulls.

@@ -1,0 +1,25 @@
+{
+  "template": "https://github.com/projectsyn/commodore-component-template.git",
+  "commit": "86f54285090cc7ef5372a32b752f8bcdc562b338",
+  "checkout": "main",
+  "context": {
+    "cookiecutter": {
+      "name": "openshift4-config",
+      "slug": "openshift4-config",
+      "parameter_key": "openshift4_config",
+      "test_cases": "defaults",
+      "add_lib": "n",
+      "add_pp": "n",
+      "add_golden": "y",
+      "add_matrix": "y",
+      "add_go_unit": "n",
+      "copyright_holder": "VSHN AG <info@vshn.ch>",
+      "copyright_year": "2022",
+      "github_owner": "appuio",
+      "github_name": "component-openshift4-config",
+      "github_url": "https://github.com/appuio/component-openshift4-config",
+      "_template": "https://github.com/projectsyn/commodore-component-template.git"
+    }
+  },
+  "directory": null
+}
