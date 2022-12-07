@@ -1,3 +1,2 @@
 parameters:
-  openshift4_config:
-    globalPullSecret: ?{vaultkv:${cluster:tenant}/${cluster:name}/openshift4-config/dockercfg}
+  openshift4_config: {}
