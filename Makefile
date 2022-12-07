@@ -15,7 +15,7 @@ help: ## Show this help
 all: lint
 
 .PHONY: lint
-lint: lint_jsonnet lint_yaml lint_adoc ## All-in-one linting
+lint: lint_jsonnet lint_yaml lint_adoc lint_kubent ## All-in-one linting
 
 .PHONY: lint_jsonnet
 lint_jsonnet: $(JSONNET_FILES) ## Lint jsonnet files
@@ -28,6 +28,9 @@ lint_yaml: ## Lint yaml files
 .PHONY: lint_adoc
 lint_adoc: ## Lint documentation
 	$(VALE_CMD) $(VALE_ARGS)
+.PHONY: lint_kubent
+lint_kubent: ## Check for deprecated Kubernetes API versions
+	$(KUBENT_DOCKER) $(KUBENT_ARGS) -f $(KUBENT_FILES)
 
 .PHONY: format
 format: format_jsonnet ## All-in-one formatting
@@ -43,7 +46,7 @@ docs-serve: ## Preview the documentation
 .PHONY: compile
 .compile:
 	mkdir -p dependencies
-	$(COMMODORE_CMD)
+	$(COMPILE_CMD)
 
 .PHONY: test
 test: commodore_args += -f tests/$(instance).yml
@@ -60,6 +63,22 @@ golden-diff: commodore_args += -f tests/$(instance).yml
 golden-diff: clean .compile ## Diff compile output against the reference version. Review output and run `make gen-golden golden-diff` if this target fails.
 	@git diff --exit-code --minimal --no-index -- tests/golden/$(instance) compiled/
 
+.PHONY: golden-diff-all
+golden-diff-all: recursive_target=golden-diff
+golden-diff-all: $(test_instances) ## Run golden-diff for all instances. Note: this doesn't work when running make with multiple parallel jobs (-j != 1).
+
+.PHONY: gen-golden-all
+gen-golden-all: recursive_target=gen-golden
+gen-golden-all: $(test_instances) ## Run gen-golden for all instances. Note: this doesn't work when running make with multiple parallel jobs (-j != 1).
+
+.PHONY: lint_kubent_all
+lint_kubent_all: recursive_target=lint_kubent
+lint_kubent_all: $(test_instances) ## Lint deprecated Kubernetes API versions for all golden test instances. Will exit on first error. Note: this doesn't work when running make with multiple parallel jobs (-j != 1).
+
+.PHONY: $(test_instances)
+$(test_instances):
+	$(MAKE) $(recursive_target) -e instance=$(basename $(@F))
+
 .PHONY: clean
 clean: ## Clean the project
-	rm -rf compiled dependencies vendor helmcharts jsonnetfile*.json || true
+	rm -rf .cache compiled dependencies vendor helmcharts jsonnetfile*.json || true
