@@ -6,7 +6,13 @@ The parent key for all the following parameters is `openshift4_config`.
 
 [horizontal]
 type:: string
-default:: null
+default:: absent
+
+[IMPORTANT]
+====
+This parameter is deprecated.
+Please migrate your additional pull secrets to parameter `globalPullSecrets`.
+====
 
 A Vault reference pointing to the Vault secret containing the docker configuration file in JSON format.
 If the parameter is null, the component doesn't manage the cluster's global pull secret.
@@ -19,6 +25,32 @@ See the OpenShift documentation for more details on https://docs.openshift.com/c
 ====
 You need to make sure that the existing pull secrets present on a cluster (deployed by the OpenShift installer) are included in the configuration deployed by this component.
 Otherwise, OpenShift cluster services may stop working because their respective container images can't be downloaded anymore.
+====
+
+== `globalPullSecrets`
+
+[horizontal]
+type:: dict
+default:: `{}`
+example::
++
+[source,yaml]
+----
+docker.io:
+  email: dockerhub@example.com <1>
+  auth: ?{vaultkv:${cluster:tenant}/${cluster:name}/openshift4-config/docker.io-pull-secret} <2>
+----
+<1> Some registries require an email address to be present for authenticated pulls.
+<2> We strongly recommend that you store the `auth` value for the registry in Vault.
+
+This parameter allows customizing the OpenShift cluster pull-secret without having to replicate the complete secret contents in Vault.
+The component expects entries in the dict to be valid entries for the `.dockerconfigjson` `auths` field.
+The component allows users to remove existing entries (also entries originally created by the OpenShift installer) by setting the value for a registry host to `null`.
+
+[NOTE]
+====
+The component doesn't base64-encode the value provided for `auth`.
+Please make sure that you store the `auth` value as base64 in Vault.
 ====
 
 == `clusterUpgradeSCCPermissionFix`

@@ -1,0 +1,33 @@
+= Migrate from v0.x to v1.x
+
+== Migrate cluster pull secret config
+
+If your cluster config uses `globalPullSecret` parameter, you should migrate your customizations to parameter `globalPullSecrets`.
+
+If you've added additional pull secrets, you can now configure them as
+
+[source,yaml]
+----
+parameters:
+  openshift4_config:
+    globalPullSecrets:
+      registry.example.com:
+        auth: ?{vaultkv:${cluster:tenant}/${cluster:name}/openshift4-config/registry.example.com-pull-secret} <1>
+        email: docker@example.com <2>
+----
+<1> We strongly recommend that you store the `auth` config for the additional registry in Vault.
+Please make sure you store the config as a base64-encoded string in Vault.
+<2> Some registries require an email address for authenticated pulls.
+
+If you've removed pull secrets, for example to https://docs.openshift.com/container-platform/4.11/support/remote_health_monitoring/opting-out-of-remote-health-reporting.html#insights-operator-new-pull-secret_opting-out-remote-health-reporting[disable telemetry], you can now remove them with
+
+[source,yaml]
+----
+parameters:
+  openshift4_config:
+    globalPullSecrets:
+      cloud.openshift.com: null <1>
+----
+<1> Setting a registry hostname to `null` will remove any auth config for that registry if it's present in the `pull-secret` secret on the cluster.
+
+See the xref:references/parameters.adoc#_globalPullSecrets[parameter docs] for more details.
