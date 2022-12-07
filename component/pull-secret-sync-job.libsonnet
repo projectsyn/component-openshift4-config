@@ -64,7 +64,9 @@ local cleanJob = kube.Job('syn-unmanage-cluster-pull-secret') {
             command: [
               'bash',
               '-c',
-              'kubectl label secret pull-secret argocd.argoproj.io/instance-; kubectl annotate secret pull-secret argocd.argoproj.io/sync-options-;',
+              'kubectl label secret pull-secret argocd.argoproj.io/instance-;' +
+              'kubectl annotate secret pull-secret kubectl.kubernetes.io/last-applied-configuration-;' +
+              'kubectl annotate secret pull-secret argocd.argoproj.io/sync-options-;',
             ],
           },
         },
