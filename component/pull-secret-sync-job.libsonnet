@@ -63,7 +63,7 @@ local cleanJob = kube.Job('syn-unmanage-cluster-pull-secret') {
             image: '%(registry)s/%(repository)s:%(tag)s' % params.images.kubectl,
             command: [
               'bash',
-              '-c',
+              '-ce',
               'kubectl label secret pull-secret argocd.argoproj.io/instance-;' +
               'kubectl annotate secret pull-secret kubectl.kubernetes.io/last-applied-configuration-;' +
               'kubectl annotate secret pull-secret argocd.argoproj.io/sync-options-;',
@@ -82,6 +82,7 @@ local syncScript = kube.Secret('syn-update-cluster-pull-secret-script') {
     // secret with the result of the JQ script (see below).
     'sync-secret.sh': |||
       #!/bin/bash
+      set -eu
 
       pull_secret=$(
           kubectl get secret pull-secret \
