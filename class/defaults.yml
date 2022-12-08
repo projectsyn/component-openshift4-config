@@ -1,7 +1,13 @@
 parameters:
   openshift4_config:
     =_metadata: {}
-    globalPullSecret: null
+    globalPullSecrets: {}
+
+    images:
+      kubectl:
+        registry: docker.io
+        repository: bitnami/kubectl
+        tag: 1.25.4
 
     # Fixes cluster upgrades on OCP4.10 clusters with custom `privileged` SCCs.
     clusterUpgradeSCCPermissionFix:

@@ -1,2 +1,7 @@
 * xref:index.adoc[Home]
+
+.How-to guides
+* xref:how-tos/migrate-v1.adoc[]
+
+.Technical reference
 * xref:references/parameters.adoc[Parameters]

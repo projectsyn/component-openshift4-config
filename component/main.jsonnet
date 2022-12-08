@@ -5,18 +5,31 @@ local inv = kap.inventory();
 // The hiera parameters for the component
 local params = inv.parameters.openshift4_config;
 
-local dockercfg = kube.Secret('pull-secret') {
-  metadata+: {
-    namespace: 'openshift-config',
-  },
-  stringData+: {
-    '.dockerconfigjson': params.globalPullSecret,
-  },
-  type: 'kubernetes.io/dockerconfigjson',
-};
+local legacyPullSecret = std.get(params, 'globalPullSecret', null);
+
+local dockercfg = std.trace(
+  'Your config for openshift4-config uses the deprecated `globalPullSecret` parameter. '
+  + 'Please migrate to `globalPullSecrets`. '
+  + 'See https://hub.syn.tools/openshift4-config/how-to/migrate-v1.html for details.',
+  kube.Secret('pull-secret') {
+    metadata+: {
+      namespace: 'openshift-config',
+      annotations+: {
+        'argocd.argoproj.io/sync-options': 'Prune=false',
+      },
+    },
+    stringData+: {
+      '.dockerconfigjson': legacyPullSecret,
+    },
+    type: 'kubernetes.io/dockerconfigjson',
+  }
+);
 
 // Define outputs below
 {
-  [if params.globalPullSecret != null then '01_dockercfg']: dockercfg,
-  [if params.clusterUpgradeSCCPermissionFix.enabled then '02_clusterUpgradeSCCPermissionFix']: (import 'privileged-scc.libsonnet'),
+  [if legacyPullSecret != null then '01_dockercfg']: dockercfg,
+  [if legacyPullSecret == null && std.length(std.objectFields(params.globalPullSecrets)) > 0 then '99_cluster_pull_secret']:
+    import 'pull-secret-sync-job.libsonnet',
+  [if params.clusterUpgradeSCCPermissionFix.enabled then '02_clusterUpgradeSCCPermissionFix']:
+    import 'privileged-scc.libsonnet',
 }
