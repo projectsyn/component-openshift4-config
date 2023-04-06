@@ -20,17 +20,11 @@ groups:
 kind: SecurityContextConstraints
 metadata:
   annotations:
-    kubernetes.io/description: 'Copy of `privileged` with increased priority to be
-      choosen over other custom SCCs.
+    kubernetes.io/description: |
+      Copy of `privileged` with increased priority to be choosen over other custom SCCs.
 
-
-      privileged allows access to all privileged and host features and the ability
-      to run as any user, any group, any fsGroup, and with any SELinux context.
-
-      WARNING: this is the most relaxed SCC and should be used only for cluster administration.
-      Grant with caution.
-
-      '
+      privileged allows access to all privileged and host features and the ability to run as any user, any group, any fsGroup, and with any SELinux context.
+      WARNING: this is the most relaxed SCC and should be used only for cluster administration. Grant with caution.
   labels:
     app.kubernetes.io/component: openshift4-config
     app.kubernetes.io/managed-by: commodore
