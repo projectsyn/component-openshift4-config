@@ -7,7 +7,7 @@ parameters:
       kubectl:
         registry: docker.io
         repository: bitnami/kubectl
-        tag: 1.25.4
+        tag: 1.25.15
 
     # Fixes cluster upgrades on OCP4.10 clusters with custom `privileged` SCCs.
     clusterUpgradeSCCPermissionFix:
