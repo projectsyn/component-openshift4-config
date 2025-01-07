@@ -1,6 +1,7 @@
 parameters:
   openshift4_config:
-    =_metadata: {}
+    =_metadata:
+      multi_tenant: true
     globalPullSecrets: {}
 
     images:
