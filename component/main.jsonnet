@@ -32,4 +32,5 @@ local dockercfg = std.trace(
     import 'pull-secret-sync-job.libsonnet',
   [if params.clusterUpgradeSCCPermissionFix.enabled then '02_clusterUpgradeSCCPermissionFix']:
     import 'privileged-scc.libsonnet',
+  [if std.length(params.motd.messages) > 0 then '03_motd']: import 'motd.libsonnet',
 }

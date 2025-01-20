@@ -1,0 +1,13 @@
+apiVersion: v1
+data:
+  message: |-
+    Welcome to APPUiO
+
+    This cluster will soon be upgraded.
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: motd
+  name: motd
+  namespace: openshift

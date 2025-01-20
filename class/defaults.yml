@@ -14,3 +14,6 @@ parameters:
     clusterUpgradeSCCPermissionFix:
       enabled: true
       priority: 3
+
+    motd:
+      messages: {}
