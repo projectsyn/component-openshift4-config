@@ -25,6 +25,8 @@ local dockercfg = std.trace(
   }
 );
 
+local motd = import 'motd.libsonnet';
+
 // Define outputs below
 {
   [if legacyPullSecret != null then '01_dockercfg']: dockercfg,
@@ -32,5 +34,5 @@ local dockercfg = std.trace(
     import 'pull-secret-sync-job.libsonnet',
   [if params.clusterUpgradeSCCPermissionFix.enabled then '02_clusterUpgradeSCCPermissionFix']:
     import 'privileged-scc.libsonnet',
-  [if std.length(params.motd.messages) > 0 then '03_motd']: import 'motd.libsonnet',
+  [if std.length(motd) > 0 then '03_motd']: motd,
 }

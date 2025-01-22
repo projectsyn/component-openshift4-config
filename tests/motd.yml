@@ -1,6 +1,7 @@
 parameters:
   openshift4_config:
     motd:
+      include_console_notifications: true
       messages:
         emtpy_message: null
         greeting: Welcome to APPUiO
