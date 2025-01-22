@@ -37,7 +37,7 @@ spec:
           env: []
           image: quay.io/appuio/oc:v4.16
           imagePullPolicy: IfNotPresent
-          name: syn-motd
+          name: sync-motd
           ports: []
           stdin: false
           tty: false
@@ -83,6 +83,58 @@ metadata:
     name: motd-gen
   name: motd-gen
   namespace: openshift-config
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  annotations: {}
+  labels:
+    name: sync-motd
+  name: sync-motd
+  namespace: openshift-config
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          labels:
+            name: sync-motd
+        spec:
+          containers:
+            - args: []
+              command:
+                - /scripts/motd_gen.sh
+              env: []
+              image: quay.io/appuio/oc:v4.16
+              imagePullPolicy: IfNotPresent
+              name: sync-motd
+              ports: []
+              stdin: false
+              tty: false
+              volumeMounts:
+                - mountPath: /export
+                  name: export
+                - mountPath: /scripts
+                  name: scripts
+              workingDir: /export
+          imagePullSecrets: []
+          initContainers: []
+          restartPolicy: OnFailure
+          serviceAccountName: motd-manager
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - emptyDir: {}
+              name: export
+            - configMap:
+                defaultMode: 360
+                name: motd-gen
+              name: scripts
+  schedule: 27 */4 * * *
+  successfulJobsHistoryLimit: 10
 ---
 apiVersion: v1
 kind: ServiceAccount

@@ -60,20 +60,14 @@ local motdRBAC =
     cluster_role_binding: cluster_role_binding,
   };
 
-local motdSync = kube.Job('sync-motd') + namespace {
-  metadata+: {
-    annotations+: {
-      'argocd.argoproj.io/hook': 'PostSync',
-      'argocd.argoproj.io/hook-delete-policy': 'BeforeHookCreation',
-    },
-  },
+local jobSpec = {
   spec+: {
     template+: {
       spec+: {
         containers_+: {
           notification: kube.Container('sync-motd') {
             image: '%(registry)s/%(repository)s:%(tag)s' % params.images.oc,
-            name: 'syn-motd',
+            name: 'sync-motd',
             workingDir: '/export',
             command: [ '/scripts/motd_gen.sh' ],
             volumeMounts_+: {
@@ -103,14 +97,31 @@ local motdSync = kube.Job('sync-motd') + namespace {
   },
 };
 
+local motdSync = kube.Job('sync-motd') + namespace + jobSpec {
+  metadata+: {
+    annotations+: {
+      'argocd.argoproj.io/hook': 'PostSync',
+      'argocd.argoproj.io/hook-delete-policy': 'BeforeHookCreation',
+    },
+  },
+};
+
 local motdScript = kube.ConfigMap('motd-gen') + namespace {
   data: {
     'motd_gen.sh': (importstr 'scripts/motd_gen.sh'),
   },
 };
 
+local motdCronJob = kube.CronJob('sync-motd') + namespace {
+  spec+: {
+    failedJobsHistoryLimit: 3,
+    schedule: '27 */4 * * *',
+    jobTemplate+: jobSpec,
+  },
+};
+
 if params.motd.include_console_notifications then
-  [ motdTemplate, motdSync, motdScript ] + std.objectValues(motdRBAC)
+  [ motdTemplate, motdSync, motdScript, motdCronJob ] + std.objectValues(motdRBAC)
 else
   if std.length(params.motd.messages) > 0 then
     [ motdCM ]
