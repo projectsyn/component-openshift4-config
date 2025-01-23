@@ -76,3 +76,29 @@ type:: number
 default:: `3`
 
 The priority the resulting SCC will have.
+
+
+== `motd`
+
+[horizontal]
+type:: dictionary
+
+Configure OpenShift's message of the day which is displayed in the terminal when using `oc login`.
+
+=== `motd.messages`
+
+[horizontal]
+type:: dictionary
+default:: `{}`
+
+A dictionary of messages to be displayed in the message of the day.
+Entries with `null` values are skipped.
+This allows users to remove notifications which were configured higher up in the hierarchy.
+
+=== `motd.include_console_notifications`
+
+[horizontal]
+type:: boolean
+default:: `false`
+
+Whether to include the console notifications from https://github.com/appuio/component-openshift4-console/blob/master/docs/modules/ROOT/pages/references/parameters.adoc#notifications[component-openshift4-console] in the message of the day.
