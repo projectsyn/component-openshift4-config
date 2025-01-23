@@ -1,0 +1,191 @@
+apiVersion: v1
+data:
+  message: |-
+    Welcome to APPUiO
+
+    This cluster will soon be upgraded.
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: motd-template
+  name: motd-template
+  namespace: openshift
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+  labels:
+    name: sync-motd
+  name: sync-motd
+  namespace: openshift-config
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        name: sync-motd
+    spec:
+      containers:
+        - args: []
+          command:
+            - /scripts/motd_gen.sh
+          env:
+            - name: HOME
+              value: /export
+          image: quay.io/appuio/oc:v4.16
+          imagePullPolicy: IfNotPresent
+          name: sync-motd
+          ports: []
+          stdin: false
+          tty: false
+          volumeMounts:
+            - mountPath: /export
+              name: export
+            - mountPath: /scripts
+              name: scripts
+          workingDir: /export
+      imagePullSecrets: []
+      initContainers: []
+      restartPolicy: OnFailure
+      serviceAccountName: motd-manager
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - emptyDir: {}
+          name: export
+        - configMap:
+            defaultMode: 360
+            name: motd-gen
+          name: scripts
+---
+apiVersion: v1
+data:
+  motd_gen.sh: |
+    #!/bin/bash
+    set -exo pipefail
+
+    jq 'del(.metadata) | .metadata.name = "motd" | .metadata.labels.name = "motd" | .data.message = ([.data.message] + input | join("\n\n"))' \
+        <(kubectl -n openshift get cm motd-template -ojson) \
+        <(kubectl get consolenotifications -l appuio.io/notification=true -ojson | jq '[.items[].spec.text]') \
+        > /tmp/motd.yaml
+
+    if [ -z "$(jq -r '.data.message' /tmp/motd.yaml)" ]; then
+        kubectl -n openshift delete cm -l name=motd
+    else
+        kubectl -n openshift apply -f /tmp/motd.yaml
+    fi
+kind: ConfigMap
+metadata:
+  annotations: {}
+  labels:
+    name: motd-gen
+  name: motd-gen
+  namespace: openshift-config
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  annotations: {}
+  labels:
+    name: sync-motd
+  name: sync-motd
+  namespace: openshift-config
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      completions: 1
+      parallelism: 1
+      template:
+        metadata:
+          labels:
+            name: sync-motd
+        spec:
+          containers:
+            - args: []
+              command:
+                - /scripts/motd_gen.sh
+              env:
+                - name: HOME
+                  value: /export
+              image: quay.io/appuio/oc:v4.16
+              imagePullPolicy: IfNotPresent
+              name: sync-motd
+              ports: []
+              stdin: false
+              tty: false
+              volumeMounts:
+                - mountPath: /export
+                  name: export
+                - mountPath: /scripts
+                  name: scripts
+              workingDir: /export
+          imagePullSecrets: []
+          initContainers: []
+          restartPolicy: OnFailure
+          serviceAccountName: motd-manager
+          terminationGracePeriodSeconds: 30
+          volumes:
+            - emptyDir: {}
+              name: export
+            - configMap:
+                defaultMode: 360
+                name: motd-gen
+              name: scripts
+  schedule: 27 */4 * * *
+  successfulJobsHistoryLimit: 10
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations: {}
+  labels:
+    name: motd-manager
+  name: motd-manager
+  namespace: openshift-config
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-motd-editor
+  name: appuio:motd-editor
+rules:
+  - apiGroups:
+      - console.openshift.io
+    resources:
+      - consolenotifications
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ''
+    resourceNames:
+      - motd
+      - motd-template
+    resources:
+      - configmaps
+    verbs:
+      - '*'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations: {}
+  labels:
+    name: appuio-motd-manager
+  name: appuio:motd-manager
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: appuio:motd-editor
+subjects:
+  - kind: ServiceAccount
+    name: motd-manager
+    namespace: openshift-config

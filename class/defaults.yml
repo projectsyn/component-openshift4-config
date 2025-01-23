@@ -9,8 +9,16 @@ parameters:
         registry: docker.io
         repository: bitnami/kubectl
         tag: 1.25.15
+      oc:
+        registry: quay.io
+        repository: appuio/oc
+        tag: v4.16
 
     # Fixes cluster upgrades on OCP4.10 clusters with custom `privileged` SCCs.
     clusterUpgradeSCCPermissionFix:
       enabled: true
       priority: 3
+
+    motd:
+      messages: {}
+      include_console_notifications: false
