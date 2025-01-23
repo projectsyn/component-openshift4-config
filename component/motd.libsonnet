@@ -70,6 +70,9 @@ local jobSpec = {
             name: 'sync-motd',
             workingDir: '/export',
             command: [ '/scripts/motd_gen.sh' ],
+            env_+: {
+              HOME: '/export',
+            },
             volumeMounts_+: {
               export: {
                 mountPath: '/export',

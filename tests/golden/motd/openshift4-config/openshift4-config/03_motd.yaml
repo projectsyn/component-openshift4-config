@@ -34,7 +34,9 @@ spec:
         - args: []
           command:
             - /scripts/motd_gen.sh
-          env: []
+          env:
+            - name: HOME
+              value: /export
           image: quay.io/appuio/oc:v4.16
           imagePullPolicy: IfNotPresent
           name: sync-motd
@@ -108,7 +110,9 @@ spec:
             - args: []
               command:
                 - /scripts/motd_gen.sh
-              env: []
+              env:
+                - name: HOME
+                  value: /export
               image: quay.io/appuio/oc:v4.16
               imagePullPolicy: IfNotPresent
               name: sync-motd
