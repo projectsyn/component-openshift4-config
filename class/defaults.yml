@@ -8,7 +8,7 @@ parameters:
       kubectl:
         registry: docker.io
         repository: bitnami/kubectl
-        tag: 1.25.15
+        tag: 1.32.2
       oc:
         registry: quay.io
         repository: appuio/oc
