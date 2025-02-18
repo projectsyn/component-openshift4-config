@@ -37,7 +37,7 @@ spec:
           env:
             - name: HOME
               value: /export
-          image: quay.io/appuio/oc:v4.16
+          image: quay.io/appuio/oc:v4.17
           imagePullPolicy: IfNotPresent
           name: sync-motd
           ports: []
@@ -113,7 +113,7 @@ spec:
               env:
                 - name: HOME
                   value: /export
-              image: quay.io/appuio/oc:v4.16
+              image: quay.io/appuio/oc:v4.17
               imagePullPolicy: IfNotPresent
               name: sync-motd
               ports: []
