@@ -12,7 +12,7 @@ parameters:
       oc:
         registry: quay.io
         repository: appuio/oc
-        tag: v4.16
+        tag: v4.17
 
     # Fixes cluster upgrades on OCP4.10 clusters with custom `privileged` SCCs.
     clusterUpgradeSCCPermissionFix:
